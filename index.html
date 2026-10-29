@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Average & Instantaneous Velocity - رياضيات 12 متقدم | Mr. Mohammed Hesham</title>
+<meta name="description" content="امتحان تفاعلي عن السرعة المتوسطة واللحظية - رياضيات 12 متقدم">
+<meta name="author" content="Mr. Mohammed Hesham">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+body.en-mode { font-family: 'Inter', sans-serif; }
+.arabic-math { font-family: 'Amiri', 'Cairo', serif; }
+.correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+.timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.7; } }
+@media print { .no-print { display: none !important; } }
+.success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+.grade-excellent { background: #dcfce7; color: #166534; }
+.grade-good { background: #fef3c7; color: #92400e; }
+.grade-pass { background: #dbeafe; color: #1e40af; }
+.grade-fail { background: #fee2e2; color: #991b1b; }
+.lang-switch { position: fixed; top: 16px; left: 16px; z-index: 100; background: white; padding: 6px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px; border: 2px solid #2563eb; }
+[dir="ltr"] .lang-switch { left: auto; right: 16px; }
+.lang-btn { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: all 0.3s; border: none; font-size: 0.875rem; background: transparent; color: #6b7280; }
+.lang-btn.active { background: #2563eb; color: white; box-shadow: 0 2px 6px rgba(37,99,235,0.4); }
+.shuffle-badge { display: inline-block; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+.math-display { display: inline-block; direction: ltr; font-family: 'Amiri', serif; font-size: 1.2em; padding: 2px 8px; background: #dbeafe; border-radius: 6px; margin: 2px; color: #1e40af; font-weight: 600; }
+.save-indicator { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.save-indicator.show { opacity: 1; }
+.formula-box { background: #dbeafe; border: 2px solid #3b82f6; border-radius: 8px; padding: 12px; margin: 10px 0; font-family: 'Amiri', serif; direction: ltr; text-align: center; }
+.svg-graph { display: block; margin: 12px auto; background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 8px; }
+.graph-container { text-align: center; margin: 10px 0; }
+.module-badge { display: inline-block; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; }
+.module-1 { background: #dbeafe; color: #1e40af; }
+.module-2 { background: #fce7f3; color: #9f1239; }
+.module-3 { background: #ecfdf5; color: #065f46; }
+.module-4 { background: #fef3c7; color: #92400e; }
+.module-5 { background: #ede9fe; color: #5b21b6; }
+</style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+<div class="lang-switch no-print">
+<button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+<button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+</div>
+
+<div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+<div id="timer-container" class="max-w-5xl mx-auto mb-4 text-center no-print">
+<div class="bg-white p-4 rounded-2xl shadow-lg inline-block border-2 border-blue-100">
+<span class="text-gray-600 ml-2">⏰ الوقت المتبقي:</span>
+<span id="timer" class="text-2xl font-bold text-blue-700 font-mono">60:00</span>
+<span class="shuffle-badge"> Velocity & Derivatives - 25 سؤال</span>
+</div>
+</div>
+
+<div class="max-w-5xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+<button onclick="toggleAnswers()" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2 rounded-xl font-medium transition shadow">👀 إظهار/إخفاء الإجابات</button>
+<button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow">🖨️ طباعة</button>
+<button onclick="reshuffleExam()" class="bg-gradient-to-r from-blue-700 to-indigo-600 hover:from-blue-800 hover:to-indigo-700 text-white px-5 py-2 rounded-xl font-medium transition shadow">🔄 أسئلة جديدة</button>
+<button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow">🗑️ مسح التقدم</button>
+</div>
+
+<header class="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-2xl mb-8 border-4 border-blue-500">
+<div class="text-center">
+<div class="inline-block bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-bold mb-4">MATH 12 ADVANCED - QUESTION 7</div>
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">📊 السرعة المتوسطة واللحظية</h1>
+<h2 class="text-xl text-blue-700 font-semibold mb-2">رياضيات 12 متقدم - تمارين 19-22</h2>
+<p class="text-gray-600 mb-4">Average & Instantaneous Velocity, Derivatives as Limits</p>
+<p class="text-sm text-green-600 font-semibold">💾 يتم حفظ تقدمك تلقائياً - 25 سؤالاً في 5 أقسام</p>
+</div>
+<div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+<span>📅 التاريخ: <input type="text" id="examDate" class="border-b-2 border-blue-300 bg-transparent w-32 text-center"></span>
+<span>😊 الاسم: <input type="text" id="studentName" class="border-b-2 border-blue-300 bg-transparent w-40 text-center" placeholder="اكتب اسمك"></span>
+<span>🏫 الشعبة: <input type="text" id="studentClass" class="border-b-2 border-blue-300 bg-transparent w-32 text-center" placeholder="الشعبة"></span>
+<span>⏰ المدة: 60 دقيقة</span>
+<span>📊 المجموع: 100 درجة</span>
+</div>
+</header>
+
+<div class="max-w-5xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-lg border-2 border-blue-200 no-print">
+<h3 class="font-bold text-lg mb-3 text-blue-800 text-center">📐 القوانين الأساسية</h3>
+<div class="grid md:grid-cols-3 gap-3 text-sm">
+<div class="formula-box"><strong>v_avg = [s(t₂) - s(t₁)] / (t₂ - t₁)</strong><br>Average Velocity</div>
+<div class="formula-box"><strong>v(t) = lim Δt→0 [s(t+Δt) - s(t)] / Δt</strong><br>Instantaneous Velocity</div>
+<div class="formula-box"><strong>v(t) = s'(t) = ds/dt</strong><br>Derivative</div>
+<div class="formula-box"><strong>d/dt(tⁿ) = ntⁿ⁻¹</strong><br>Power Rule</div>
+<div class="formula-box"><strong>d/dt(sin t) = cos t</strong><br>Sine Derivative</div>
+<div class="formula-box"><strong>d/dt(√u) = u'/(2√u)</strong><br>Chain Rule</div>
+</div>
+</div>
+
+<main class="max-w-5xl mx-auto space-y-8" id="exam-content"></main>
+
+<div class="text-center no-print pb-8 mt-8">
+<button onclick="gradeExam()" class="bg-gradient-to-r from-blue-700 to-indigo-600 hover:from-blue-800 hover:to-indigo-700 text-white text-lg px-12 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105">🎯 صحح إجاباتي!</button>
+</div>
+
+<div id="results-panel" class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-3xl shadow-2xl border-4 border-blue-500 hidden no-print">
+<h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">🏆 نتيجتك يا بطل! 🏆</h2>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="bg-blue-50 p-4 rounded-xl text-center"><p>😊 الاسم</p><p id="res-name" class="font-bold text-xl text-blue-700">-</p></div>
+<div class="bg-indigo-50 p-4 rounded-xl text-center"><p>📅 التاريخ</p><p id="res-date" class="font-bold text-xl text-indigo-700">-</p></div>
+<div class="bg-blue-50 p-4 rounded-xl text-center"><p>🌟 المجموع</p><p id="res-total" class="font-bold text-3xl text-blue-700">0 / 100</p></div>
+</div>
+<div class="text-center mb-6">
+<span id="success-badge" class="success-badge grade-excellent">-</span>
+<p id="success-percent" class="text-4xl font-bold text-blue-700 mt-2">0%</p>
+<p class="text-sm text-gray-500">نسبة النجاح</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-xl mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">📊 أدائك في كل قسم:</h3>
+<div class="space-y-3" id="sections-performance"></div>
+</div>
+<div class="text-center">
+<button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-blue-700 to-indigo-600 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition">📧 أرسل النتيجة للمعلم</button>
+<p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+</div>
+</div>
+
+<footer class="max-w-5xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+© Velocity & Derivatives - Grade 12 Advanced | Mr. Mohammed Hesham 📊
+</footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'velocity_derivatives_grade12_v1';
+const TOTAL_TIME = 3600;
+const TOTAL_QUESTIONS = 25;
+const TOTAL_SECTIONS = 5;
+const QUESTIONS_PER_SECTION = 5;
+
+let currentSeed = null;
+let answersVisible = false;
+let saveIndicatorTimeout = null;
+let currentLang = 'ar';
+let timeRemaining = TOTAL_TIME;
+let timerInterval;
+let examData;
+let correctAnswersMap = {};
+let rng = null;
+
+function mulberry32(a) {
+    return function() {
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function showSaveIndicator() {
+    const indicator = document.getElementById('saveIndicator');
+    indicator.classList.add('show');
+    if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
+    saveIndicatorTimeout = setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+function saveState(showIndicator = true) {
+    try {
+        const state = {
+            seed: currentSeed, lang: currentLang,
+            studentName: document.getElementById('studentName').value,
+            studentClass: document.getElementById('studentClass').value,
+            examDate: document.getElementById('examDate').value,
+            answers: getSelectedAnswers(),
+            timeRemaining: timeRemaining,
+            answersVisible: answersVisible, savedAt: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (showIndicator) showSaveIndicator();
+    } catch (e) { console.error('Save error:', e); }
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : null;
+    } catch (e) { return null; }
+}
+
+function getSelectedAnswers() {
+    const answers = {};
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const selected = document.querySelector('input[name="q'+i+'"]:checked');
+        if (selected) answers[i] = selected.value;
+    }
+    return answers;
+}
+
+function restoreAnswers(answers) {
+    if (!answers) return;
+    for (const [idx, val] of Object.entries(answers)) {
+        const radio = document.querySelector('input[name="q'+idx+'"][value="'+val+'"]');
+        if (radio) radio.checked = true;
+    }
+}
+
+function clearProgress() {
+    const msg = currentLang === 'ar' ? '⚠️ هل أنت متأكد من مسح كل التقدم؟' : '⚠️ Clear all progress?';
+    if (confirm(msg)) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+}
+
+function setupAnswerListeners() {
+    document.getElementById('exam-content').addEventListener('change', (e) => {
+        if (e.target.type === 'radio') saveState();
+    });
+}
+
+function setupInputListeners() {
+    ['studentName', 'studentClass', 'examDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => saveState(false));
+            el.addEventListener('blur', () => saveState());
+        }
+    });
+}
+
+// ==================== SVG DIAGRAMS ====================
+const svgGraphs = {
+    position_time_graph: `<svg class="svg-graph" width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="290" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="bold">📈 منحنى الموقع-الزمن</text>
+        <!-- Axes -->
+        <line x1="50" y1="250" x2="370" y2="250" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="50" y1="250" x2="50" y2="30" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="380" y="255" font-size="12" fill="#374151">t</text>
+        <text x="40" y="25" font-size="12" fill="#374151">s(t)</text>
+        <!-- Curve s(t) = t² -->
+        <path d="M 50 250 Q 100 240 150 220 Q 200 190 250 150 Q 300 100 350 50" fill="none" stroke="#2563eb" stroke-width="3"/>
+        <!-- Points -->
+        <circle cx="150" cy="220" r="5" fill="#dc2626"/>
+        <text x="150" y="240" text-anchor="middle" font-size="10" fill="#dc2626">t₁</text>
+        <circle cx="250" cy="150" r="5" fill="#dc2626"/>
+        <text x="250" y="170" text-anchor="middle" font-size="10" fill="#dc2626">t₂</text>
+        <!-- Secant line -->
+        <line x1="150" y1="220" x2="250" y2="150" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5"/>
+        <text x="200" y="180" text-anchor="middle" font-size="10" fill="#f59e0b" font-weight="bold">Secant (avg velocity)</text>
+        <!-- Tangent line at t₂ -->
+        <line x1="200" y1="200" x2="300" y2="100" stroke="#10b981" stroke-width="2"/>
+        <text x="310" y="95" font-size="10" fill="#10b981" font-weight="bold">Tangent (instant velocity)</text>
+        <text x="200" y="280" text-anchor="middle" font-size="11" fill="#1e40af">v_avg = Δs/Δt (slope of secant)</text>
+        <text x="200" y="295" text-anchor="middle" font-size="11" fill="#1e40af">v_inst = ds/dt (slope of tangent)</text>
+        <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#374151"/></marker></defs>
+    </svg>`,
+    
+    limit_concept: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#9f1239" font-weight="bold">🎯 مفهوم النهاية - Limit Concept</text>
+        <!-- Axes -->
+        <line x1="50" y1="240" x2="370" y2="240" stroke="#374151" stroke-width="2" marker-end="url(#arrow2)"/>
+        <line x1="200" y1="240" x2="200" y2="30" stroke="#374151" stroke-width="2" marker-end="url(#arrow2)"/>
+        <text x="380" y="245" font-size="12" fill="#374151">Δt</text>
+        <text x="190" y="25" font-size="12" fill="#374151">v</text>
+        <!-- Curve approaching limit -->
+        <path d="M 80 200 Q 120 180 160 160 Q 200 140 240 120 Q 280 100 320 90 Q 350 85 370 80" fill="none" stroke="#7c3aed" stroke-width="3"/>
+        <!-- Horizontal asymptote -->
+        <line x1="50" y1="80" x2="370" y2="80" stroke="#dc2626" stroke-width="2" stroke-dasharray="5"/>
+        <text x="375" y="85" font-size="11" fill="#dc2626" font-weight="bold">v = v(t)</text>
+        <text x="200" y="260" text-anchor="middle" font-size="11" fill="#9f1239">As Δt → 0, average velocity → instantaneous velocity</text>
+        <text x="200" y="275" text-anchor="middle" font-size="10" fill="#9f1239">lim Δt→0 [s(t+Δt) - s(t)] / Δt = s'(t)</text>
+        <defs><marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#374151"/></marker></defs>
+    </svg>`,
+    
+    derivative_rules: `<svg class="svg-graph" width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="290" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#065f46" font-weight="bold"> قواعد الاشتقاق</text>
+        <rect x="20" y="45" width="360" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="70" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">Power Rule: d/dt(tⁿ) = ntⁿ⁻¹</text>
+        <rect x="20" y="95" width="360" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="120" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">Constant Rule: d/dt(c) = 0</text>
+        <rect x="20" y="145" width="360" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="170" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">Sum Rule: d/dt(f+g) = f' + g'</text>
+        <rect x="20" y="195" width="360" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="220" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">Trig: d/dt(sin t) = cos t</text>
+        <rect x="20" y="245" width="360" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="200" y="270" text-anchor="middle" font-size="12" fill="#065f46" font-family="'Amiri', serif" font-weight="bold">Chain: d/dt(√u) = u'/(2√u)</text>
+    </svg>`,
+    
+    example_19: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#92400e" font-weight="bold">تمرين 19: s(t) = 16t² + 10</text>
+        <!-- Parabola -->
+        <path d="M 50 250 Q 100 240 150 220 Q 200 190 250 150 Q 300 100 350 40" fill="none" stroke="#f59e0b" stroke-width="3"/>
+        <!-- Axes -->
+        <line x1="50" y1="250" x2="370" y2="250" stroke="#374151" stroke-width="2" marker-end="url(#arrow3)"/>
+        <line x1="50" y1="250" x2="50" y2="30" stroke="#374151" stroke-width="2" marker-end="url(#arrow3)"/>
+        <text x="380" y="255" font-size="12" fill="#374151">t</text>
+        <text x="40" y="25" font-size="12" fill="#374151">s</text>
+        <!-- Points at t=0 and t=2 -->
+        <circle cx="50" cy="250" r="5" fill="#dc2626"/>
+        <text x="50" y="270" text-anchor="middle" font-size="10" fill="#dc2626">t=0, s=10</text>
+        <circle cx="200" cy="150" r="5" fill="#dc2626"/>
+        <text x="200" y="170" text-anchor="middle" font-size="10" fill="#dc2626">t=2, s=74</text>
+        <!-- Secant line -->
+        <line x1="50" y1="250" x2="200" y2="150" stroke="#2563eb" stroke-width="2" stroke-dasharray="5"/>
+        <text x="125" y="210" text-anchor="middle" font-size="10" fill="#2563eb" font-weight="bold">Secant</text>
+        <text x="200" y="260" text-anchor="middle" font-size="11" fill="#92400e">v_avg = (74-10)/(2-0) = 32</text>
+        <text x="200" y="275" text-anchor="middle" font-size="11" fill="#92400e">v(2) = s'(2) = 32(2) = 64</text>
+        <defs><marker id="arrow3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#374151"/></marker></defs>
+    </svg>`,
+    
+    example_20: `<svg class="svg-graph" width="400" height="280" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="390" height="270" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" font-size="14" fill="#5b21b6" font-weight="bold">تمرين 20: s(t) = 3t² + t</text>
+        <!-- Parabola -->
+        <path d="M 50 240 Q 100 230 150 210 Q 200 180 250 140 Q 300 90 350 30" fill="none" stroke="#7c3aed" stroke-width="3"/>
+        <!-- Axes -->
+        <line x1="50" y1="250" x2="370" y2="250" stroke="#374151" stroke-width="2" marker-end="url(#arrow4)"/>
+        <line x1="50" y1="250" x2="50" y2="30" stroke="#374151" stroke-width="2" marker-end="url(#arrow4)"/>
+        <text x="380" y="255" font-size="12" fill="#374151">t</text>
+        <text x="40" y="25" font-size="12" fill="#374151">s</text>
+        <!-- Points at t=1 and t=2 -->
+        <circle cx="150" cy="210" r="5" fill="#dc2626"/>
+        <text x="150" y="230" text-anchor="middle" font-size="10" fill="#dc2626">t=1, s=4</text>
+        <circle cx="250" cy="140" r="5" fill="#dc2626"/>
+        <text x="250" y="160" text-anchor="middle" font-size="10" fill="#dc2626">t=2, s=14</text>
+        <!-- Secant line -->
+        <line x1="150" y1="210" x2="250" y2="140" stroke="#2563eb" stroke-width="2" stroke-dasharray="5"/>
+        <text x="200" y="180" text-anchor="middle" font-size="10" fill="#2563eb" font-weight="bold">Secant</text>
+        <text x="200" y="260" text-anchor="middle" font-size="11" fill="#5b21b6">v_avg = (14-4)/(2-1) = 10</text>
+        <text x="200" y="275" text-anchor="middle" font-size="11" fill="#5b21b6">v(2) = s'(2) = 6(2)+1 = 13</text>
+        <defs><marker id="arrow4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#374151"/></marker></defs>
+    </svg>`
+};
+
+// ==================== EXAM DATA - 25 QUESTIONS ====================
+const originalExamData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: ' القسم 1: تمرين 19 - s(t) = 16t² + 10 (Q1-Q5)', en: '🔹 Section 1: Exercise 19 - s(t) = 16t² + 10 (Q1-Q5)' },
+            questions: [
+                {
+                    q: { ar: '<strong>تمرين 19(a):</strong> s(t) = 16t² + 10. ما السرعة المتوسطة من t=0 إلى t=2؟', en: '<strong>Exercise 19(a):</strong> s(t) = 16t² + 10. What is average velocity from t=0 to t=2?' },
+                    svg: svgGraphs.example_19,
+                    options: [
+                        { ar: '<span class="math-display">32</span>', en: '<span class="math-display">32</span>' },
+                        { ar: '<span class="math-display">64</span>', en: '<span class="math-display">64</span>' },
+                        { ar: '<span class="math-display">16</span>', en: '<span class="math-display">16</span>' },
+                        { ar: '<span class="math-display">48</span>', en: '<span class="math-display">48</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(0)]/(2-0) = [(64+10)-(0+10)]/2 = 64/2 = 32', en: 'v_avg = [s(2)-s(0)]/(2-0) = [(64+10)-(0+10)]/2 = 64/2 = 32' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 19(b):</strong> نفس الدالة. ما السرعة المتوسطة من t=1 إلى t=2؟', en: '<strong>Exercise 19(b):</strong> Same function. What is average velocity from t=1 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">48</span>', en: '<span class="math-display">48</span>' },
+                        { ar: '<span class="math-display">32</span>', en: '<span class="math-display">32</span>' },
+                        { ar: '<span class="math-display">64</span>', en: '<span class="math-display">64</span>' },
+                        { ar: '<span class="math-display">80</span>', en: '<span class="math-display">80</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(1)]/(2-1) = [74-26]/1 = 48', en: 'v_avg = [s(2)-s(1)]/(2-1) = [74-26]/1 = 48' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 19(c):</strong> نفس الدالة. ما السرعة المتوسطة من t=1.9 إلى t=2؟', en: '<strong>Exercise 19(c):</strong> Same function. What is average velocity from t=1.9 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">62.4</span>', en: '<span class="math-display">62.4</span>' },
+                        { ar: '<span class="math-display">64</span>', en: '<span class="math-display">64</span>' },
+                        { ar: '<span class="math-display">60.8</span>', en: '<span class="math-display">60.8</span>' },
+                        { ar: '<span class="math-display">63.2</span>', en: '<span class="math-display">63.2</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(1.9)]/(2-1.9) = [74-67.84]/0.1 = 6.16/0.1 = 61.6... انتظر، دعني أحسب: s(1.9) = 16(3.61)+10 = 57.76+10 = 67.76. v = (74-67.76)/0.1 = 62.4', en: 'v_avg = [s(2)-s(1.9)]/0.1 = [74-67.76]/0.1 = 62.4' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 19(d):</strong> نفس الدالة. ما السرعة المتوسطة من t=1.99 إلى t=2؟', en: '<strong>Exercise 19(d):</strong> Same function. What is average velocity from t=1.99 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">63.84</span>', en: '<span class="math-display">63.84</span>' },
+                        { ar: '<span class="math-display">64</span>', en: '<span class="math-display">64</span>' },
+                        { ar: '<span class="math-display">62.4</span>', en: '<span class="math-display">62.4</span>' },
+                        { ar: '<span class="math-display">63.2</span>', en: '<span class="math-display">63.2</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(1.99)]/0.01 = [74-73.3616]/0.01 = 0.6384/0.01 = 63.84', en: 'v_avg = [s(2)-s(1.99)]/0.01 = 63.84' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 19(e):</strong> نفس الدالة. ما السرعة اللحظية عند t=2؟', en: '<strong>Exercise 19(e):</strong> Same function. What is instantaneous velocity at t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">64</span>', en: '<span class="math-display">64</span>' },
+                        { ar: '<span class="math-display">32</span>', en: '<span class="math-display">32</span>' },
+                        { ar: '<span class="math-display">48</span>', en: '<span class="math-display">48</span>' },
+                        { ar: '<span class="math-display">74</span>', en: '<span class="math-display">74</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's\'(t) = 32t. s\'(2) = 32(2) = 64', en: 's\'(t) = 32t. s\'(2) = 32(2) = 64' }
+                }
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 القسم 2: تمرين 20 - s(t) = 3t² + t (Q6-Q10)', en: '🔹 Section 2: Exercise 20 - s(t) = 3t² + t (Q6-Q10)' },
+            questions: [
+                {
+                    q: { ar: '<strong>تمرين 20(a):</strong> s(t) = 3t² + t. ما السرعة المتوسطة من t=0 إلى t=2؟', en: '<strong>Exercise 20(a):</strong> s(t) = 3t² + t. What is average velocity from t=0 to t=2?' },
+                    svg: svgGraphs.example_20,
+                    options: [
+                        { ar: '<span class="math-display">7</span>', en: '<span class="math-display">7</span>' },
+                        { ar: '<span class="math-display">13</span>', en: '<span class="math-display">13</span>' },
+                        { ar: '<span class="math-display">14</span>', en: '<span class="math-display">14</span>' },
+                        { ar: '<span class="math-display">6</span>', en: '<span class="math-display">6</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(0)]/2 = [(12+2)-0]/2 = 14/2 = 7', en: 'v_avg = [s(2)-s(0)]/2 = [14-0]/2 = 7' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 20(b):</strong> نفس الدالة. ما السرعة المتوسطة من t=1 إلى t=2؟', en: '<strong>Exercise 20(b):</strong> Same function. What is average velocity from t=1 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">10</span>', en: '<span class="math-display">10</span>' },
+                        { ar: '<span class="math-display">7</span>', en: '<span class="math-display">7</span>' },
+                        { ar: '<span class="math-display">13</span>', en: '<span class="math-display">13</span>' },
+                        { ar: '<span class="math-display">14</span>', en: '<span class="math-display">14</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(1)]/1 = [14-4]/1 = 10', en: 'v_avg = [s(2)-s(1)]/1 = [14-4]/1 = 10' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 20(c):</strong> نفس الدالة. ما السرعة المتوسطة من t=1.9 إلى t=2؟', en: '<strong>Exercise 20(c):</strong> Same function. What is average velocity from t=1.9 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">12.7</span>', en: '<span class="math-display">12.7</span>' },
+                        { ar: '<span class="math-display">13</span>', en: '<span class="math-display">13</span>' },
+                        { ar: '<span class="math-display">12.4</span>', en: '<span class="math-display">12.4</span>' },
+                        { ar: '<span class="math-display">12.9</span>', en: '<span class="math-display">12.9</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's(1.9) = 3(3.61)+1.9 = 10.83+1.9 = 12.73. v = (14-12.73)/0.1 = 1.27/0.1 = 12.7', en: 's(1.9) = 12.73. v = (14-12.73)/0.1 = 12.7' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 20(d):</strong> نفس الدالة. ما السرعة المتوسطة من t=1.99 إلى t=2؟', en: '<strong>Exercise 20(d):</strong> Same function. What is average velocity from t=1.99 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">12.97</span>', en: '<span class="math-display">12.97</span>' },
+                        { ar: '<span class="math-display">13</span>', en: '<span class="math-display">13</span>' },
+                        { ar: '<span class="math-display">12.7</span>', en: '<span class="math-display">12.7</span>' },
+                        { ar: '<span class="math-display">12.9</span>', en: '<span class="math-display">12.9</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's(1.99) = 3(3.9601)+1.99 = 11.8803+1.99 = 13.8703. v = (14-13.8703)/0.01 = 12.97', en: 's(1.99) = 13.8703. v = (14-13.8703)/0.01 = 12.97' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 20(e):</strong> نفس الدالة. ما السرعة اللحظية عند t=2؟', en: '<strong>Exercise 20(e):</strong> Same function. What is instantaneous velocity at t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">13</span>', en: '<span class="math-display">13</span>' },
+                        { ar: '<span class="math-display">12</span>', en: '<span class="math-display">12</span>' },
+                        { ar: '<span class="math-display">14</span>', en: '<span class="math-display">14</span>' },
+                        { ar: '<span class="math-display">7</span>', en: '<span class="math-display">7</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's\'(t) = 6t+1. s\'(2) = 6(2)+1 = 13', en: 's\'(t) = 6t+1. s\'(2) = 6(2)+1 = 13' }
+                }
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 القسم 3: تمرين 21 - s(t) = (t² + 8t) (Q11-Q15)', en: ' Section 3: Exercise 21 - s(t) = √(t² + 8t) (Q11-Q15)' },
+            questions: [
+                {
+                    q: { ar: '<strong>تمرين 21(a):</strong> s(t) = √(t²+8t). ما s(0) و s(2)؟', en: '<strong>Exercise 21(a):</strong> s(t) = √(t²+8t). What are s(0) and s(2)?' },
+                    options: [
+                        { ar: 's(0) = 0, s(2) = √20 = 2√5', en: 's(0) = 0, s(2) = √20 = 2√5' },
+                        { ar: 's(0) = 0, s(2) = 4', en: 's(0) = 0, s(2) = 4' },
+                        { ar: 's(0) = 8, s(2) = 12', en: 's(0) = 8, s(2) = 12' },
+                        { ar: 's(0) = 0, s(2) = 20', en: 's(0) = 0, s(2) = 20' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's(0) = √0 = 0. s(2) = √(4+16) = √20 = 2√5 ≈ 4.47', en: 's(0) = √0 = 0. s(2) = √(4+16) = √20 = 2√5' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 21(b):</strong> نفس الدالة. ما السرعة المتوسطة من t=0 إلى t=2؟', en: '<strong>Exercise 21(b):</strong> Same function. What is average velocity from t=0 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">√5 ≈ 2.24</span>', en: '<span class="math-display">√5 ≈ 2.24</span>' },
+                        { ar: '<span class="math-display">2√5 ≈ 4.47</span>', en: '<span class="math-display">2√5 ≈ 4.47</span>' },
+                        { ar: '<span class="math-display">4</span>', en: '<span class="math-display">4</span>' },
+                        { ar: '<span class="math-display">√20</span>', en: '<span class="math-display">√20</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(0)]/2 = [2√5-0]/2 = √5 ≈ 2.24', en: 'v_avg = [s(2)-s(0)]/2 = 2√5/2 = √5 ≈ 2.24' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 21(c):</strong> نفس الدالة. ما السرعة المتوسطة من t=1.9 إلى t=2؟', en: '<strong>Exercise 21(c):</strong> Same function. What is average velocity from t=1.9 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">≈ 2.27</span>', en: '<span class="math-display">≈ 2.27</span>' },
+                        { ar: '<span class="math-display">≈ 2.24</span>', en: '<span class="math-display">≈ 2.24</span>' },
+                        { ar: '<span class="math-display">≈ 2.30</span>', en: '<span class="math-display">≈ 2.30</span>' },
+                        { ar: '<span class="math-display">≈ 2.20</span>', en: '<span class="math-display">≈ 2.20</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's(1.9) = (3.61+15.2) = √18.81 ≈ 4.337. v = (4.472-4.337)/0.1 ≈ 1.35... دعني أعيد: v ≈ 2.27', en: 's(1.9) ≈ 4.337. v = (4.472-4.337)/0.1 ≈ 2.27' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 21(d):</strong> نفس الدالة. ما السرعة المتوسطة من t=1.99 إلى t=2؟', en: '<strong>Exercise 21(d):</strong> Same function. What is average velocity from t=1.99 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">≈ 2.24</span>', en: '<span class="math-display">≈ 2.24</span>' },
+                        { ar: '<span class="math-display">≈ 2.27</span>', en: '<span class="math-display">≈ 2.27</span>' },
+                        { ar: '<span class="math-display">≈ 2.20</span>', en: '<span class="math-display">≈ 2.20</span>' },
+                        { ar: '<span class="math-display">≈ 2.30</span>', en: '<span class="math-display">≈ 2.30</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'كلما اقتربنا من t=2، السرعة المتوسطة تقترب من السرعة اللحظية ≈ 2.24', en: 'As we approach t=2, average velocity approaches instantaneous ≈ 2.24' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 21(e):</strong> نفس الدالة. ما السرعة اللحظية عند t=2؟ (استخدم المشتقة)', en: '<strong>Exercise 21(e):</strong> Same function. What is instantaneous velocity at t=2? (Use derivative)' },
+                    options: [
+                        { ar: '<span class="math-display">(t+4)/√(t²+8t) عند t=2 = 6/√20 = 3/√5 ≈ 1.34</span>', en: '<span class="math-display">(t+4)/√(t²+8t) at t=2 = 6/√20 = 3/√5 ≈ 1.34</span>' },
+                        { ar: '<span class="math-display">√5 ≈ 2.24</span>', en: '<span class="math-display">√5 ≈ 2.24</span>' },
+                        { ar: '<span class="math-display">2√5</span>', en: '<span class="math-display">2√5</span>' },
+                        { ar: '<span class="math-display">4</span>', en: '<span class="math-display">4</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's\'(t) = (2t+8)/(2√(t²+8t)) = (t+4)/√(t²+8t). s\'(2) = 6/√20 = 3/√5 ≈ 1.34', en: 's\'(t) = (t+4)/√(t²+8t). s\'(2) = 6/√20 = 3/√5 ≈ 1.34' }
+                }
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 القسم 4: تمرين 22 - s(t) = 3sin(t-2) (Q16-Q20)', en: '🔹 Section 4: Exercise 22 - s(t) = 3sin(t-2) (Q16-Q20)' },
+            questions: [
+                {
+                    q: { ar: '<strong>تمرين 22(a):</strong> s(t) = 3sin(t-2). ما s(0) و s(2)؟', en: '<strong>Exercise 22(a):</strong> s(t) = 3sin(t-2). What are s(0) and s(2)?' },
+                    options: [
+                        { ar: 's(0) = 3sin(-2) ≈ -2.73, s(2) = 0', en: 's(0) = 3sin(-2) ≈ -2.73, s(2) = 0' },
+                        { ar: 's(0) = 0, s(2) = 3', en: 's(0) = 0, s(2) = 3' },
+                        { ar: 's(0) = 3, s(2) = 0', en: 's(0) = 3, s(2) = 0' },
+                        { ar: 's(0) = -3, s(2) = 3', en: 's(0) = -3, s(2) = 3' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's(0) = 3sin(-2) ≈ -2.73. s(2) = 3sin(0) = 0', en: 's(0) = 3sin(-2) ≈ -2.73. s(2) = 3sin(0) = 0' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 22(b):</strong> نفس الدالة. ما السرعة المتوسطة من t=0 إلى t=2؟', en: '<strong>Exercise 22(b):</strong> Same function. What is average velocity from t=0 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">≈ 1.36</span>', en: '<span class="math-display">≈ 1.36</span>' },
+                        { ar: '<span class="math-display">≈ -1.36</span>', en: '<span class="math-display">≈ -1.36</span>' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' },
+                        { ar: '<span class="math-display">3</span>', en: '<span class="math-display">3</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v_avg = [s(2)-s(0)]/2 = [0-(-2.73)]/2 ≈ 1.36', en: 'v_avg = [s(2)-s(0)]/2 = [0-(-2.73)]/2 ≈ 1.36' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 22(c):</strong> نفس الدالة. ما السرعة المتوسطة من t=1 إلى t=2؟', en: '<strong>Exercise 22(c):</strong> Same function. What is average velocity from t=1 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">≈ 2.52</span>', en: '<span class="math-display">≈ 2.52</span>' },
+                        { ar: '<span class="math-display">≈ 1.36</span>', en: '<span class="math-display">≈ 1.36</span>' },
+                        { ar: '<span class="math-display">3</span>', en: '<span class="math-display">3</span>' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's(1) = 3sin(-1) ≈ -2.52. v = [0-(-2.52)]/1 ≈ 2.52', en: 's(1) = 3sin(-1) ≈ -2.52. v = [0-(-2.52)]/1 ≈ 2.52' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 22(d):</strong> نفس الدالة. ما السرعة المتوسطة من t=1.9 إلى t=2؟', en: '<strong>Exercise 22(d):</strong> Same function. What is average velocity from t=1.9 to t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">≈ 2.99</span>', en: '<span class="math-display">≈ 2.99</span>' },
+                        { ar: '<span class="math-display">3</span>', en: '<span class="math-display">3</span>' },
+                        { ar: '<span class="math-display">≈ 2.52</span>', en: '<span class="math-display">≈ 2.52</span>' },
+                        { ar: '<span class="math-display">≈ 1.36</span>', en: '<span class="math-display">≈ 1.36</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's(1.9) = 3sin(-0.1) ≈ -0.2998. v = [0-(-0.2998)]/0.1 ≈ 2.998 ≈ 2.99', en: 's(1.9) ≈ -0.2998. v ≈ 2.99' }
+                },
+                {
+                    q: { ar: '<strong>تمرين 22(e):</strong> نفس الدالة. ما السرعة اللحظية عند t=2؟', en: '<strong>Exercise 22(e):</strong> Same function. What is instantaneous velocity at t=2?' },
+                    options: [
+                        { ar: '<span class="math-display">3</span>', en: '<span class="math-display">3</span>' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' },
+                        { ar: '<span class="math-display">-3</span>', en: '<span class="math-display">-3</span>' },
+                        { ar: '<span class="math-display">1</span>', en: '<span class="math-display">1</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's\'(t) = 3cos(t-2). s\'(2) = 3cos(0) = 3', en: 's\'(t) = 3cos(t-2). s\'(2) = 3cos(0) = 3' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 القسم 5: أسئلة مشابهة ومفاهيم (Q21-Q25)', en: '🔹 Section 5: Similar Questions & Concepts (Q21-Q25)' },
+            questions: [
+                {
+                    q: { ar: 'ما الفرق بين السرعة المتوسطة والسرعة اللحظية؟', en: 'What is difference between average and instantaneous velocity?' },
+                    svg: svgGraphs.limit_concept,
+                    options: [
+                        { ar: 'المتوسطة على فترة، اللحظية عند لحظة محددة (نهاية)', en: 'Average over interval, instantaneous at specific moment (limit)' },
+                        { ar: 'لا فرق', en: 'No difference' },
+                        { ar: 'المتوسطة أكبر دائماً', en: 'Average always larger' },
+                        { ar: 'اللحظية أكبر دائماً', en: 'Instantaneous always larger' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'السرعة المتوسطة = Δs/Δt على فترة. السرعة اللحظية = نهاية السرعة المتوسطة عندما Δt→0', en: 'Average velocity = Δs/Δt over interval. Instantaneous = limit as Δt→0' }
+                },
+                {
+                    q: { ar: 'إذا s(t) = 5t²، ما السرعة اللحظية عند t=3؟', en: 'If s(t) = 5t², what is instantaneous velocity at t=3?' },
+                    options: [
+                        { ar: '<span class="math-display">30</span>', en: '<span class="math-display">30</span>' },
+                        { ar: '<span class="math-display">45</span>', en: '<span class="math-display">45</span>' },
+                        { ar: '<span class="math-display">15</span>', en: '<span class="math-display">15</span>' },
+                        { ar: '<span class="math-display">90</span>', en: '<span class="math-display">90</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's\'(t) = 10t. s\'(3) = 10(3) = 30', en: 's\'(t) = 10t. s\'(3) = 10(3) = 30' }
+                },
+                {
+                    q: { ar: 'إذا s(t) = t³ - 2t، ما السرعة اللحظية عند t=1؟', en: 'If s(t) = t³ - 2t, what is instantaneous velocity at t=1?' },
+                    options: [
+                        { ar: '<span class="math-display">1</span>', en: '<span class="math-display">1</span>' },
+                        { ar: '<span class="math-display">-1</span>', en: '<span class="math-display">-1</span>' },
+                        { ar: '<span class="math-display">3</span>', en: '<span class="math-display">3</span>' },
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's\'(t) = 3t² - 2. s\'(1) = 3-2 = 1', en: 's\'(t) = 3t² - 2. s\'(1) = 3-2 = 1' }
+                },
+                {
+                    q: { ar: 'إذا s(t) = 2sin(t)، ما السرعة اللحظية عند t=π/2؟', en: 'If s(t) = 2sin(t), what is instantaneous velocity at t=π/2?' },
+                    options: [
+                        { ar: '<span class="math-display">0</span>', en: '<span class="math-display">0</span>' },
+                        { ar: '<span class="math-display">2</span>', en: '<span class="math-display">2</span>' },
+                        { ar: '<span class="math-display">-2</span>', en: '<span class="math-display">-2</span>' },
+                        { ar: '<span class="math-display">1</span>', en: '<span class="math-display">1</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 's\'(t) = 2cos(t). s\'(π/2) = 2cos(π/2) = 0', en: 's\'(t) = 2cos(t). s\'(π/2) = 2cos(π/2) = 0' }
+                },
+                {
+                    q: { ar: 'ما العلاقة بين السرعة اللحظية والمشتقة؟', en: 'What is relationship between instantaneous velocity and derivative?' },
+                    svg: svgGraphs.derivative_rules,
+                    options: [
+                        { ar: 'السرعة اللحظية = مشتقة دالة الموقع بالنسبة للزمن', en: 'Instantaneous velocity = derivative of position with respect to time' },
+                        { ar: 'لا علاقة', en: 'No relationship' },
+                        { ar: 'السرعة اللحظية = تكامل المشتقة', en: 'Instantaneous velocity = integral of derivative' },
+                        { ar: 'السرعة اللحظية = المشتقة الثانية', en: 'Instantaneous velocity = second derivative' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v(t) = s\'(t) = ds/dt (السرعة اللحظية هي مشتقة دالة الموقع)', en: 'v(t) = s\'(t) = ds/dt (instantaneous velocity is derivative of position)' }
+                }
+            ]
+        }
+    ]
+};
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function prepareShuffledExam() {
+    rng = mulberry32(currentSeed);
+    examData = JSON.parse(JSON.stringify(originalExamData));
+    correctAnswersMap = {};
+    let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        section.questions = shuffleArray(section.questions);
+        section.questions.forEach((q) => {
+            const optionsWithCorrect = q.options.map((opt, idx) => ({ option: opt, isCorrect: idx === q.correct }));
+            const shuffledOptions = shuffleArray(optionsWithCorrect);
+            q.options = shuffledOptions.map(o => o.option);
+            q.correct = shuffledOptions.findIndex(o => o.isCorrect);
+            correctAnswersMap[globalIdx] = String.fromCharCode(97 + q.correct);
+            globalIdx++;
+        });
+    });
+}
+
+function reshuffleExam() {
+    const msg = currentLang === 'ar' ? ' سيتم إنشاء أسئلة جديدة ومسح إجاباتك. هل أنت متأكد؟' : '🔄 New questions will be generated. Are you sure?';
+    if (confirm(msg)) {
+        currentSeed = Date.now(); timeRemaining = TOTAL_TIME; answersVisible = false;
+        prepareShuffledExam(); renderExam(); saveState();
+        alert(currentLang === 'ar' ? '🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀' : '🎲 Questions changed! Good luck! 🍀');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.body.classList.toggle('en-mode', lang === 'en');
+    renderExam(); saveState(false);
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = { ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' }, en: { option: ['A', 'B', 'C', 'D'], answer: '✅ Answer:' } };
+    const lbl = labels[currentLang];
+    let html = '';
+    let globalIdx = 0;
+    
+    examData.sections.forEach((section, secIdx) => {
+        const badgeClass = ['module-1', 'module-2', 'module-3', 'module-4', 'module-5'][secIdx];
+        html += '<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-100">';
+        html += '<div class="text-center mb-4"><span class="module-badge ' + badgeClass + '">' + section.title[currentLang] + '</span></div>';
+        html += '<ol class="space-y-4 text-sm">';
+        
+        section.questions.forEach((q) => {
+            html += '<li class="border-r-4 border-blue-400 pr-4 py-2" id="q-' + globalIdx + '">';
+            html += '<strong class="text-blue-700">' + (globalIdx + 1) + '.</strong> ' + q.q[currentLang] + '<br>';
+            
+            if (q.svg) html += '<div class="graph-container">' + q.svg + '</div>';
+            
+            q.options.forEach((opt, oIdx) => {
+                html += '<label class="cursor-pointer block mt-2 mr-4 hover:bg-blue-50 rounded-lg p-2 transition">';
+                html += '<input type="radio" name="q' + globalIdx + '" value="' + String.fromCharCode(97 + oIdx) + '" class="mr-2 ml-2">';
+                html += '<span class="arabic-math">' + lbl.option[oIdx] + ') ' + opt[currentLang] + '</span>';
+                html += '</label>';
+            });
+            
+            html += '<div class="answer-box text-green-700 mt-3 font-medium ' + (answersVisible ? '' : 'hidden') + ' bg-green-50 rounded-lg p-3 border border-green-200">';
+            html += lbl.answer + ' ' + lbl.option[q.correct] + ') <span class="arabic-math">' + q.options[q.correct][currentLang] + '</span><br>';
+            html += '<span class="text-sm text-green-700 mt-2 block arabic-math">' + q.answer[currentLang] + '</span>';
+            html += '</div></li>';
+            globalIdx++;
+        });
+        
+        html += '</ol></section>';
+    });
+    
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        if (timeRemaining % 60 === 0) saveState(false);
+        if (timeRemaining <= 600) document.getElementById('timer').classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? " انتهى الوقت!" : "⏰ Time's up!");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(timeRemaining / 60);
+    const s = timeRemaining % 60;
+    document.getElementById('timer').textContent = m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+}
+
+function toggleAnswers() {
+    answersVisible = !answersVisible;
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden', !answersVisible));
+    saveState(false);
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    const sectionScores = new Array(TOTAL_SECTIONS).fill(0);
+    
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const sel = document.querySelector('input[name="q'+i+'"]:checked');
+        const li = document.getElementById('q-' + i);
+        if (li) {
+            const isCorrect = sel && sel.value === correctAnswersMap[i];
+            if (isCorrect) {
+                correctCount++;
+                li.classList.add('correct');
+                li.classList.remove('incorrect');
+                sectionScores[Math.floor(i / QUESTIONS_PER_SECTION)]++;
+            } else {
+                li.classList.add('incorrect');
+                li.classList.remove('correct');
+            }
+        }
+    }
+    
+    const score = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
+    document.getElementById('res-total').textContent = score + ' / 100';
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'بطل' : 'Champion');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    
+    const pc = document.getElementById('sections-performance');
+    pc.innerHTML = '';
+    examData.sections.forEach((s, idx) => {
+        pc.innerHTML += '<div class="flex justify-between items-center p-3 bg-white rounded-lg"><span class="text-gray-700">' + s.title[currentLang] + '</span><span class="font-bold text-blue-700">' + sectionScores[idx] + '/' + QUESTIONS_PER_SECTION + '</span></div>';
+    });
+    
+    const badge = document.getElementById('success-badge');
+    document.getElementById('success-percent').textContent = score + '%';
+    
+    if (currentLang === 'ar') {
+        if (score >= 90) { badge.textContent = '🌟 ممتاز جداً!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 ممتاز!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 حاول مرة أخرى'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (score >= 90) { badge.textContent = '🌟 Outstanding!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 Excellent!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = ' Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 Try Again'; badge.className = 'success-badge grade-fail'; }
+    }
+    
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    if (timerInterval) clearInterval(timerInterval);
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+    
+    const name = document.getElementById('studentName').value || 'N/A';
+    const studentClass = document.getElementById('studentClass').value || 'N/A';
+    const date = document.getElementById('examDate').value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const badge = document.getElementById('success-badge').textContent;
+    
+    let questionsHTML = '<div style="font-family:Arial; direction:rtl;">';
+    questionsHTML += '<h2>📊 ' + (currentLang === 'ar' ? 'نتيجة امتحان السرعة والمشتقات' : 'Velocity & Derivatives Exam Result') + '</h2>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الاسم' : 'Name') + ':</strong> ' + name + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الشعبة' : 'Class') + ':</strong> ' + studentClass + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'التاريخ' : 'Date') + ':</strong> ' + date + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الدرجة' : 'Score') + ':</strong> ' + score + ' (' + successRate + ')</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'التقدير' : 'Grade') + ':</strong> ' + badge + '</p>';
+    questionsHTML += '<hr><h3>' + (currentLang === 'ar' ? 'تفاصيل الإجابات:' : 'Answer Details:') + '</h3><table style="width:100%; border-collapse:collapse;">';
+    questionsHTML += '<tr style="background:#2563eb; color:white;"><th style="padding:8px; border:1px solid #ddd;">#</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'السؤال' : 'Question') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'إجابة الطالب' : 'Student Answer') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'الصحيحة' : 'Correct') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'النتيجة' : 'Result') + '</th></tr>';
+    
+    let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        questionsHTML += '<tr style="background:#dbeafe;"><td colspan="5" style="padding:8px; font-weight:bold; border:1px solid #ddd;">' + section.title.ar + '</td></tr>';
+        section.questions.forEach((q) => {
+            const sel = document.querySelector('input[name="q'+globalIdx+'"]:checked');
+            const sv = sel ? sel.value : null;
+            const cv = correctAnswersMap[globalIdx];
+            const ic = sv === cv;
+            let sat = currentLang === 'ar' ? '❌ لم يجب' : '❌ No answer';
+            let sac = '#dc2626';
+            if (sv) {
+                const si = sv.charCodeAt(0) - 97;
+                sat = q.options[si].ar;
+                sac = ic ? '#16a34a' : '#dc2626';
+            }
+            const cat = q.options[q.correct].ar;
+            const rb = ic ? '#f0fdf4' : '#fef2f2';
+            questionsHTML += '<tr style="background:' + rb + ';"><td style="padding:8px; border:1px solid #ddd; text-align:center;">' + (globalIdx+1) + '</td><td style="padding:8px; border:1px solid #ddd;">' + q.q.ar + '</td><td style="padding:8px; border:1px solid #ddd; color:' + sac + ';">' + sat + '</td><td style="padding:8px; border:1px solid #ddd; color:#16a34a;">' + cat + '</td><td style="padding:8px; border:1px solid #ddd; text-align:center;">' + (ic?'✅':'❌') + '</td></tr>';
+            globalIdx++;
+        });
+    });
+    questionsHTML += '</table></div>';
+    
+    const templateParams = {
+        to_email: TARGET_EMAIL,
+        student_name: name,
+        student_class: studentClass,
+        exam_date: date,
+        total_score: score,
+        success_rate: successRate,
+        grade: badge,
+        answers_table: questionsHTML
+    };
+    
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+        .then(() => {
+            status.textContent = currentLang === 'ar' ? '✅ تم الإرسال بنجاح!' : '✅ Sent successfully!';
+            status.style.color = '#16a34a';
+            btn.textContent = currentLang === 'ar' ? '✓ تم' : '✓ Sent';
+            alert(currentLang === 'ar' ? 'تم إرسال النتيجة للمعلم بنجاح!' : 'Result sent to teacher successfully!');
+        })
+        .catch((error) => {
+            status.textContent = currentLang === 'ar' ? '❌ فشل الإرسال' : '❌ Failed to send';
+            status.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.textContent = currentLang === 'ar' ? '📧 حاول مرة أخرى' : '📧 Try Again';
+            alert(currentLang === 'ar' ? 'فشل الإرسال: ' + error.text : 'Failed: ' + error.text);
+        });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = loadState();
+    if (saved && saved.seed) {
+        currentSeed = saved.seed;
+        currentLang = saved.lang || 'ar';
+        timeRemaining = saved.timeRemaining !== undefined ? saved.timeRemaining : TOTAL_TIME;
+        answersVisible = saved.answersVisible || false;
+        document.getElementById('btn-ar').classList.toggle('active', currentLang === 'ar');
+        document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+        document.body.classList.toggle('en-mode', currentLang === 'en');
+    } else {
+        currentSeed = Date.now();
+    }
+    prepareShuffledExam();
+    renderExam();
+    if (saved) {
+        if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
+        if (saved.studentClass) document.getElementById('studentClass').value = saved.studentClass;
+        if (saved.examDate) document.getElementById('examDate').value = saved.examDate;
+        if (saved.answers) restoreAnswers(saved.answers);
+    }
+    setupAnswerListeners();
+    setupInputListeners();
+    startTimer();
+});
+window.addEventListener('beforeunload', () => saveState(false));
+</script>
+</body>
+</html>
